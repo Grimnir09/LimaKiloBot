@@ -1,0 +1,67 @@
+{
+  "carrier": [
+    {
+      "Name": "CV-59 Forrestal",
+      "Radio": "127.500 AM",
+      "Tacan": "59X",
+      "ICLS": "12"
+    },
+    {
+      "Name": "CVN-75 Harry S. Truman",
+      "Radio": "126.500 AM",
+      "Tacan": "75X",
+      "ICLS": "13"
+    },
+    {
+      "Name": "CVN-74 John C. Stennis",
+      "Radio": "127.500 AM",
+      "Tacan": "74X",
+      "ICLS": "10"
+    },
+    {
+      "Name": "CVN-73 George Washington",
+      "Radio": "126.500 AM",
+      "Tacan": "73X",
+      "ICLS": "10"
+    },
+    {
+      "Name": "LHA-4 Nassau",
+      "Radio": "126.500 AM",
+      "Tacan": "74X",
+      "ICLS": "10"
+    }
+  ],
+
+  "tanker": [
+    {
+      "Name": "Texaco",
+      "Type": "KC-135 MPRS",
+      "Radio": "xxx.xxx AM",
+      "Tacan": "1X"
+    },
+    {
+      "Name": "Carrier",
+      "Type": "S-B3",
+      "Radio": "xxx.xxx AM",
+      "Tacan": "28X"
+    },
+    {
+      "Name": "Texaco",
+      "Type": "KC-135 MPRS",
+      "Radio": "xxx.xxx AM",
+      "Tacan": "1X"
+    },
+    {
+      "Name": "Shell",
+      "Type": "KC-135 MPRS",
+      "Radio": "xxx.xxx AM",
+      "Tacan": "37X"
+    },
+    {
+      "Name": "Arco",
+      "Type": "KC-135 MPRS",
+      "Radio": "xxx.xxx AM",
+      "Tacan": "38X"
+    }
+  ]
+}
