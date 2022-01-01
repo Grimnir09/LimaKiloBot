@@ -1,2 +1,4 @@
 .env
 __pycache__
+server_status.json
+nextcord.log

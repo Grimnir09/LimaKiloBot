@@ -136,7 +136,6 @@ class Information(commands.Cog):
 
         for lsosubgrade in lsograde:
             readout = ""
-            print(lsosubgrade)
             for grade, remarks in self.lsogrades.items():
                 if grade in lsosubgrade:
                     # print(f"found {grade}")
