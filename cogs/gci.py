@@ -1,10 +1,9 @@
 from datetime import datetime, timedelta
-from os import name
-from nextcord import member
 from nextcord.ext import commands
 from nextcord.ext import tasks
 from nextcord.utils import get
 import asyncio
+import json
 
 
 class GCI(commands.Cog):
@@ -33,11 +32,13 @@ class GCI(commands.Cog):
 
     @commands.command(pass_context=True, description="Get server status")
     async def gci(self, ctx, state=None, *, notes=None):
-        
+
         if not state and not notes:
             gci_status = ""
             for count, gci in enumerate(self.gci_data):
-                gci_status = gci_status + f"{gci['user']}/{gci['user'].nick} - `{gci['notes']}`"
+                gci_status = (
+                    gci_status + f"{gci['user']}/{gci['user'].nick} - `{gci['notes']}`"
+                )
             await ctx.send(gci_status)
             return
 
@@ -46,7 +47,7 @@ class GCI(commands.Cog):
             self.gci_data.append(
                 {
                     "user": ctx.author,
-                    "date_to_expire": datetime.now() + timedelta(seconds=10),
+                    "date_to_expire": datetime.now() + timedelta(seconds=30),
                     "notes": notes,
                 }
             )
@@ -56,8 +57,6 @@ class GCI(commands.Cog):
 
         elif state.lower() == "sunset":
             print("gci roll removed")
-
-
 
 
 def setup(bot):

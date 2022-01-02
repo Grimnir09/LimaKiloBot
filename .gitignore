@@ -2,3 +2,5 @@
 __pycache__
 server_status.json
 nextcord.log
+logs
+workspace.code-workspace

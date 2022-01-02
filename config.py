@@ -1,3 +1,5 @@
 import os
+import dotenv
 
-discord_token = os.getenv("discord_token")
+dotenv.load_dotenv()
+discord_token = os.getenv("DISCORD_TOKEN")
