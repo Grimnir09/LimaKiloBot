@@ -45,7 +45,7 @@ class GCI(commands.Cog):
             ):
 
                 await gci["user"].send(
-                    f"{gci['user'].mention} this is your 10 minute refresh warning. \n Your GCI session will end in `30 seconds` \n To refresh your session use `!gci refresh`",
+                    f"{gci['user'].mention} this is your 10 minute refresh warning. \n Your GCI session will end in `10 Minutes` \n To refresh your session use `!gci refresh`",
                 )
 
                 gci["refresh_warning_sent"] = True
