@@ -9,6 +9,7 @@ class Server(commands.Cog):
         self.bot = bot
 
     @commands.command(pass_context=True, description="Get server status")
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def status(self, ctx):
         """Gets the server's mission status"""
         async with aiohttp.ClientSession() as session:
