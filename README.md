@@ -5,4 +5,7 @@ Proof of concept for LK.
 - Poetry
 - Python3.9
 - nextcord 
-- python-dotenv 
+- python-dotenv
+
+## Optional Heroku Hosting Buildpacks
+- heroku/python
