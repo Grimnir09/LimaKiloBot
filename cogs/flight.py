@@ -120,7 +120,7 @@ class Flight(commands.Cog):
                     "notes": notes,
                     "flight": None
                 })
-                print(self.flight_data)
+                await ctx.message.add_reaction("✅")
             else:
                 available_aircraft_string = ''
                 for available_aircraft in self.available_aircraft:
@@ -142,8 +142,6 @@ class Flight(commands.Cog):
                 'size': flight_size,
                 'notes': flight_notes
             })
-
-            print(self.flight_data['flights'])
             await ctx.message.add_reaction("✅")
 
     @flight.command(pass_context=True, description="Create a Flight for people to join.")
