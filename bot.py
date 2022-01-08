@@ -8,7 +8,8 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 logger = logging.getLogger("nextcord")
 logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler(filename="nextcord.log", encoding="utf-8", mode="w")
+handler = logging.FileHandler(
+    filename="nextcord.log", encoding="utf-8", mode="w")
 handler.setFormatter(
     logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s")
 )
@@ -24,6 +25,7 @@ try:
     bot.load_extension("cogs.server")
     bot.load_extension("cogs.information")
     bot.load_extension("cogs.gci")
+    bot.load_extension("cogs.flight")
     # not really nessesary extentions comment them out if needed.
 
 except commands.errors.ExtensionNotFound as e:

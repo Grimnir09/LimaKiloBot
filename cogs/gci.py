@@ -52,6 +52,8 @@ class GCI(commands.Cog):
 
     @commands.command(pass_context=True, description="Assigns and Deligates GCI roles")
     async def gci(self, ctx, state=None, *, notes=None):
+        
+        # TODO: Convert to subcommands
 
         # eq to !gci, get a list of gcis
         if not state and not notes:
