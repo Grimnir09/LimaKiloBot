@@ -6,7 +6,7 @@ authors = ["Grimnir09"]
 license = "GPL"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "3.9.6"
 nextcord = "2.0.0-alpha.6"
 python-dotenv = "^0.19.2"
 
