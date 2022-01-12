@@ -1,8 +1,11 @@
+import asyncio
 from datetime import datetime, timedelta
+from nextcord import SlashOption
 from nextcord.ext import commands
 from nextcord.ext import tasks
 from nextcord.utils import get
 import nextcord
+
 
 class GCI(commands.Cog):
 
@@ -45,20 +48,71 @@ class GCI(commands.Cog):
             ):
 
                 await gci["user"].send(
-                    f"{gci['user'].mention} this is your 10 minute refresh warning. \n Your GCI session will end in `10 Minutes` \n To refresh your session use `!gci refresh`",
+                    f"{gci['user'].mention} this is your 10 minute refresh warning. \n Your GCI session will end in `10 Minutes` \n To refresh your session use `/gci refresh`",
                 )
 
                 gci["refresh_warning_sent"] = True
 
-    @commands.command(pass_context=True, description="Assigns and Deligates GCI roles")
-    async def gci(self, ctx, state=None, *, notes=None):
-        
-        # TODO: Convert to subcommands
+    @nextcord.slash_command(name="gci", description='GCI Related Commands', guild_ids=[358048911144779777, 772617490827313162, 924753029402619924])
+    async def gci(self, interaction: nextcord.Interaction,
+                  state: str = SlashOption(
+                      name='state',
+                      choices=['Sunrise', 'Sunset', 'Refresh', 'List'],
+                      description='Sunrise: Ready To Rock, Sunset: Heaven or Hell?'
+                  ),
+                  notes: str = SlashOption(
+                      description='Give a short description about what your going to do as a GCI.',
+                      default='Monitoring 134.000 AM',
+                      required=False
+                  )
+                  ):
 
-        # eq to !gci, get a list of gcis
-        if not state and not notes:
+        if state == "Sunrise" and not (any(gci["user"] == interaction.user for gci in self.gci_data)):
+
+            self.gci_data.append(
+                {
+                    "user": interaction.user,
+                    "date_to_expire": datetime.now() + timedelta(hours=1),
+                    "date_refresh_warning": datetime.now() + timedelta(minutes=40),
+                    "notes": notes,
+                    "ctx": interaction,
+                    "refresh_warning_sent": False,
+                }
+            )
+            role = get(interaction.user.guild.roles, name="GCI")
+            await interaction.user.add_roles(role)
+            await interaction.response.send_message(f'GCI `{interaction.user.name}` - `Sunrise` - `{notes}`')
+            return
+
+        else:
+            await interaction.response.send_message('You are already Sunrise. To update your status use `/gci` to set yourself as sunset', ephemeral=True)
+
+        if state == "Sunset":
+            for count, gci in enumerate(self.gci_data):
+                if gci["user"] == interaction.user:
+                    role = get(gci["user"].guild.roles, name="GCI")
+                    await gci["user"].remove_roles(role)
+                    self.gci_data.pop(count)
+                    await interaction.response.send_message('Gotcha Chief!', ephemeral=True)
+
+        if state == "Refresh" and any(gci["user"] == interaction.user for gci in self.gci_data) == True:
+            for gci in self.gci_data:
+
+                if gci["user"] == interaction.user and datetime.now() >= gci["date_refresh_warning"]:
+                    gci["date_to_expire"] = datetime.now() + timedelta(hours=1)
+                    gci["date_refresh_warning"] = datetime.now() + \
+                        timedelta(minutes=30)
+                    gci["refresh_warning_sent"] = False
+                    await interaction.response.send_message(f'Got it! Your next refresh will be at `{gci["date_to_expire"]:%H:%M}` Zulu', ephemeral=True)
+                    return
+
+                else:
+                    await interaction.response.send_message(f'Your not inside the refresh period. Your refresh period starts at: `{gci["date_refresh_warning"]:%H:%M}` Zulu', ephemeral=True)
+                    return
+        if state == "List":
             if len(self.gci_data) == 0:
-                await ctx.reply("No GCIs currently online.")
+                await interaction.response.send_message("No GCIs currently online.", ephemeral=True)
+                return
 
             gci_status = ""
             for count, gci in enumerate(self.gci_data):
@@ -66,68 +120,7 @@ class GCI(commands.Cog):
                     gci_status
                     + f"{gci['user']}/{gci['user'].nick} - `{gci['notes']}`\n"
                 )
-            await ctx.send(gci_status)
-            return
-
-        if state.lower() == "sunrise" and ctx.author not in self.gci_data:
-
-            self.gci_data.append(
-                {
-                    "user": ctx.author,
-                    "date_to_expire": datetime.now() + timedelta(hours=1),
-                    "date_refresh_warning": datetime.now() + timedelta(minutes=40),
-                    "notes": notes,
-                    "ctx": ctx,
-                    "refresh_warning_sent": False,
-                }
-            )
-            role = get(ctx.guild.roles, name="GCI")
-            await ctx.author.add_roles(role)
-            await ctx.reply(f"{ctx.author.mention} GCI Sunrise, `{notes}`")
-
-        elif state.lower() == "sunset":
-            for count, gci in enumerate(self.gci_data):
-                if gci["user"] == ctx.author:
-                    role = get(gci["user"].guild.roles, name="GCI")
-                    await gci["user"].remove_roles(role)
-                    await ctx.message.add_reaction("✅")
-                    self.gci_data.pop(count)
-
-        elif (
-            state.lower() == "refresh"
-            and any(gci["user"] == ctx.author for gci in self.gci_data) == True
-            ):
-            for gci in self.gci_data:
-                if gci["user"] == ctx.author and (
-                    datetime.now() >= gci["date_refresh_warning"]
-                ):
-                    gci["date_to_expire"] = datetime.now() + timedelta(hours=1)
-                    gci["date_refresh_warning"] = datetime.now() + timedelta(minutes=30)
-                    gci["refresh_warning_sent"] = False
-                    await ctx.message.add_reaction("✅")
-
-        # Expose self.gci_data
-        elif (
-            state.lower() == "debug"
-            and ctx.author.guild_permissions.administrator == True
-        ):
-            embed = nextcord.Embed(
-                title=f"GCI Debug",
-                description=f"Current Time: `{datetime.now()}`",
-                color=0x03B300,
-            )
-            embed.set_author(name=ctx.author, icon_url=ctx.author.avatar.url)
-
-            gci_debug = ""
-
-            for gci in self.gci_data:
-                gci_debug = (
-                    gci_debug
-                    + f"`{gci['user']}`\nExpire:{gci['date_to_expire']}\nRefresh:{gci['date_refresh_warning']}\n"
-                )
-
-            embed.add_field(name="GCIs", value=gci_debug)
-            await ctx.reply(embed=embed)
+            await interaction.response.send_message(gci_status, ephemeral=True)
 
 
 def setup(bot):

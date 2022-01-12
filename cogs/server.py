@@ -1,6 +1,7 @@
 import json
 import nextcord
 from nextcord.ext import commands
+from nextcord import slash_command
 import aiohttp
 
 
@@ -8,15 +9,13 @@ class Server(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(pass_context=True, description="Get server status")
-    @commands.cooldown(1, 30, commands.BucketType.user)
-    async def status(self, ctx):
+    @nextcord.slash_command(description="kill me pete")
+    async def status(self, interaction: nextcord.Interaction):
         """Gets the server's mission status"""
         async with aiohttp.ClientSession() as session:
             async with session.get(
                 "https://levant.limakilo.net/status/data"
             ) as response:
-                await ctx.send(ctx.author.mention)
                 with open("server_status.json", "wb") as outfile:
                     async for chunk in response.content.iter_chunked(4096):
                         outfile.write(chunk)
@@ -52,9 +51,12 @@ class Server(commands.Cog):
             description="Current Lima Kilo Campaign Status, Syria",
             color=0x03B300,
         )
-        embed.set_author(name=ctx.author, icon_url=ctx.author.avatar.url)
-        embed.add_field(name="Friendly Airbases", value=friendly_airbases, inline=True)
-        embed.add_field(name="Hostile Active Regions", value=enemyAssets, inline=True)
+        embed.set_author(name=interaction.user.name,
+                         icon_url=interaction.user.avatar.url)
+        embed.add_field(name="Friendly Airbases",
+                        value=friendly_airbases, inline=True)
+        embed.add_field(name="Hostile Active Regions",
+                        value=enemyAssets, inline=True)
         embed.add_field(name="Active SAMs", value=active_sams, inline=True)
         embed.add_field(
             name="Packages in progress",
@@ -87,7 +89,7 @@ class Server(commands.Cog):
                 inline=False,
             )
         embed.set_footer(text=f"Generated at: {server_data['date']}")
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
 
 def setup(bot):

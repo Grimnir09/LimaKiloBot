@@ -1,13 +1,13 @@
 import json
-from os import name
 import nextcord
-from nextcord import message
 from nextcord.ext import commands
-import aiohttp
-import asyncio
 
 
 class Information(commands.Cog):
+    
+    # TODO: Clean up, convert to Slash Commands.
+    # Needs clarification on how to use class level vars
+    # Inside of a slash option's Choice parameter.
 
     info_data = None
     lsogrades = None
@@ -75,59 +75,6 @@ class Information(commands.Cog):
             await ctx.send(
                 f"{ctx.author.mention} No infomation on `{subject}`, check spelling and try again."
             )
-
-    @commands.command(pass_context=True, description="List carrier information")
-    async def set_info(self, ctx):
-        if ctx.author.guild_permissions.administrator:
-
-            embed = nextcord.Embed(
-                title=f"Information Setup",
-                description="Below are the currently available subjects.",
-                color=0x03B300,
-            )
-            embed.set_author(name=ctx.author, icon_url=ctx.author.avatar.url)
-
-            available_subjects = ""
-
-            for count, subject in enumerate(self.info_data):
-                available_subjects = available_subjects + f"{count}. `{subject}`\n"
-
-            embed.add_field(
-                name="Subjects",
-                value=available_subjects,
-                inline=False,
-            )
-
-            original_msg = await ctx.send(ctx.author.mention, embed=embed)
-
-            try:
-                msg = await self.bot.wait_for(
-                    "message",
-                    check=lambda message: message.author == ctx.author
-                    and message.content.lower() in self.info_data,
-                )
-
-            except asyncio.TimeoutError:
-                embed.set_footer(
-                    "Command Timed out after 1 minute, try again!",
-                    icon_url=self.bot.user.avatar_url,
-                )
-                return
-
-            embed.remove_field(0)
-            embed.title = f"Information Setup for {msg.content.capitalize()}"
-            embed.description = (
-                f"Currently available items for `{msg.content.capitalize()}`"
-            )
-
-            available_items = ""
-
-            for items in self.info_data[msg.content.lower()]:
-                available_items = available_items + f"`{items['Name']}`\n"
-
-            embed.add_field(name="Items", value=available_items, inline=False)
-
-            await original_msg.edit(embed=embed)
 
     @commands.command(pass_context=True, description="List carrier information")
     async def lso(self, ctx, *, lsograde):

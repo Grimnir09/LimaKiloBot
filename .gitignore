@@ -4,3 +4,4 @@ server_status.json
 nextcord.log
 logs
 workspace.code-workspace
+.vscode/
